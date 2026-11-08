@@ -2,16 +2,33 @@
 
 **English**: [README.md](README.md)
 
+**Convertir des ROM 3DS en CIA — et l'inverse — sur Mac, dans une seule fenêtre, sans rien installer.**
+
 ## ⬇ Téléchargement
 
-**[Multitool-3DS-macOS.zip](https://github.com/jeromepepermans/multitool-3ds-macos/releases/latest/download/Multitool-3DS-macOS.zip)**
+**[Multitool-3DS-macOS.zip](https://github.com/jeromepepermans/3ds-cia-converter-macos/releases/latest/download/Multitool-3DS-macOS.zip)**
 — application universelle Apple Silicon et Intel (~43 Mo, Python et `makerom` embarqués).
 
-Toutes les versions : **[github.com/jeromepepermans/multitool-3ds-macos/releases](https://github.com/jeromepepermans/multitool-3ds-macos/releases)**
+Toutes les versions : **[github.com/jeromepepermans/3ds-cia-converter-macos/releases](https://github.com/jeromepepermans/3ds-cia-converter-macos/releases)**
 
 Portage macOS du *Multitool 3DS* de TheRinzler65 : conversion **.3ds ↔ .cia**, déchiffrement de
 ROM et génération de **xorpads**. Application unique, sans installation : aucun Python, aucun
 Homebrew, aucun outil tiers à télécharger.
+
+![Aperçu de l'interface](docs/screenshot.png)
+
+## Pourquoi celui-ci
+
+| Outil | Type | Ce qu'il fait |
+|---|---|---|
+| [ihaveamac/3dsconv](https://github.com/ihaveamac/3dsconv) (643★) | CLI, Python | 3DS → CIA |
+| [knktc/CiaForge](https://github.com/knktc/CiaForge) (5★) | bureau, Rust | CCI → CIA |
+| [vanshksingh/Smelt-3DS-Decryptor](https://github.com/vanshksingh/Smelt-3DS-Decryptor) (26★) | app macOS, SwiftUI | déchiffre .3ds/.cia/.cci |
+| **cette application** | `.app` macOS, sans installation | **3DS → CIA, CIA → 3DS, déchiffrement, xorpads** |
+
+Étoiles au 2026-11-08. La différence qui compte : la conversion marche **avec un xorpad
+d'exheader, sans avoir besoin des clés boot9**, et la même fenêtre fait la conversion inverse et
+le déchiffrement.
 
 > Statut : la conversion **3DS → CIA** a été validée sur une machine macOS réelle (2026-11-08,
 > voir *Limites connues*). GPL-2.0, œuvre dérivée de

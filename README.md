@@ -2,6 +2,13 @@
 
 **Français** : [README.fr.md](README.fr.md)
 
+## ⬇ Download
+
+**[Multitool-3DS-macOS.zip](https://github.com/jeromepepermans/multitool-3ds-macos/releases/latest/download/Multitool-3DS-macOS.zip)**
+— universal `.app` for Apple Silicon and Intel (~43 MB, Python and `makerom` bundled).
+
+All releases: **[github.com/jeromepepermans/multitool-3ds-macos/releases](https://github.com/jeromepepermans/multitool-3ds-macos/releases)**
+
 macOS port of *Multitool 3DS* by TheRinzler65: **.3ds ↔ .cia** conversion, ROM decryption and
 **xorpad** generation. A single application with nothing to install — no Python, no Homebrew, no
 third-party tool to download.

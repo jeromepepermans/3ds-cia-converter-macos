@@ -17,6 +17,8 @@ Homebrew, aucun outil tiers à télécharger.
 
 ![Aperçu de l'interface](docs/screenshot.png)
 
+*Interface macOS, thème sombre (le chemin du bundle est masqué).*
+
 ## Pourquoi celui-ci
 
 | Outil | Type | Ce qu'il fait |

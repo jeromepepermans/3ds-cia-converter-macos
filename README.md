@@ -17,6 +17,8 @@ third-party tool to download.
 
 ![Interface preview](docs/screenshot.png)
 
+*macOS interface, dark theme (the bundle path is masked).*
+
 ## Why this one
 
 | Tool | Type | What it does |

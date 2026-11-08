@@ -1,0 +1,14 @@
+# artefacts de construction
+/dist/
+/.cache/
+/tools/linux/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# divers
+.DS_Store
+*.log

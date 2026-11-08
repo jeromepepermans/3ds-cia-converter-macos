@@ -1,149 +1,150 @@
 # Multitool 3DS — macOS
 
-> **English** — macOS port of *Multitool 3DS* (3DS ↔ CIA conversion, ROM decryption, xorpads).
-> Self-contained universal `.app` (Apple Silicon + Intel) bundling its own Python runtime and
-> `makerom` 0.19 — nothing to install. Download the `.app` from the **Releases** page.
-> GPL-2.0, derivative work of
+**Français** : [README.fr.md](README.fr.md)
+
+macOS port of *Multitool 3DS* by TheRinzler65: **.3ds ↔ .cia** conversion, ROM decryption and
+**xorpad** generation. A single application with nothing to install — no Python, no Homebrew, no
+third-party tool to download.
+
+> Status: the 3DS → CIA conversion was validated on a real macOS machine (2026-11-08, see
+> *Known limitations*). GPL-2.0, derivative work of
 > [TheRinzler65/Convertisseur-3DS-CIA](https://github.com/TheRinzler65/Convertisseur-3DS-CIA).
-> Not affiliated with Nintendo; no keys, no ROMs are provided.
+> Not affiliated with Nintendo; no keys and no ROMs are provided.
 
-Portage macOS du *Multitool 3DS* de TheRinzler65 : conversion **.3ds ↔ .cia**, déchiffrement de
-ROM et génération de **xorpads**. Application unique, sans installation : aucun Python, aucun
-Homebrew, aucun outil tiers à télécharger.
+## 1. Install
 
-## 1. Installer
+1. Unzip `Multitool-3DS-macOS.zip`.
+2. Drag **Multitool 3DS.app** into **Applications**.
+3. First launch: **right-click → Open** (the app is not signed by an Apple-identified developer).
 
-1. Dézipper `Multitool-3DS-macOS.zip`.
-2. Glisser **Multitool 3DS.app** dans le dossier **Applications**.
-3. Premier lancement : **clic droit → Ouvrir** (l'application n'est pas signée par un
-   développeur identifié par Apple).
-
-Si macOS refuse avec « application endommagée », ouvrez le Terminal et lancez une fois :
+If macOS refuses with “application is damaged”, run this once in Terminal:
 
 ```bash
 xattr -dr com.apple.quarantine "/Applications/Multitool 3DS.app"
 ```
 
-> Le paquet contient deux copies du runtime : **Apple Silicon** (`arm64`) et **Intel**
-> (`x86_64`). Le lanceur choisit automatiquement selon la machine. Rien à décider.
+> The bundle ships two copies of the Python runtime: **Apple Silicon** (`arm64`) and **Intel**
+> (`x86_64`). The launcher picks the right one automatically — nothing to decide.
 
-## 2. Utiliser
+## 2. Usage
 
-Quatre modes, dans la barre du haut.
+Four modes, in the top bar.
 
 ### 3DS → CIA
 
-1. Ajouter un `.3ds`, `.cci` ou un `.zip` contenant des `.3ds`.
-2. Vérifier le **dossier de sortie**.
-3. Cliquer **Convertir en CIA**.
+1. Add a `.3ds`, `.cci`, or a `.zip` containing `.3ds` files.
+2. Check the **output folder**.
+3. Click **Convertir en CIA**.
 
-Le fichier `.cia` est écrit dans le dossier de sortie. Cas possibles :
+The `.cia` is written to the output folder. Possible cases:
 
-- **ROM déjà déchiffrée** (flag `NoCrypto`) : conversion directe.
-- **ROM chiffrée** : il faut le **xorpad** de l'exheader. S'il manque, l'application s'arrête en
-  le disant et propose l'onglet **Xorpads**.
-- Un xorpad **invalide** est refusé : le hash de l'exheader ne correspond pas, donc la ROM serait
-  corrompue à l'arrivée.
+- **Already decrypted ROM** (`NoCrypto` flag): direct conversion.
+- **Encrypted ROM**: the exheader **xorpad** is required. If it is missing, the app stops and
+  says so, pointing to the **Xorpads** tab.
+- An **invalid** xorpad is rejected: the exheader hash does not match, so the ROM would come out
+  corrupted.
 
 ### CIA → 3DS
 
-Ajouter les `.cia`, cliquer **Convertir en 3DS**. L'application lit d'abord l'en-tête, le ticket
-et le TMD de la CIA, puis appelle `makerom` avec les **clés de production** (`-target p`) :
-c'est indispensable pour une CIA du commerce, dont le *titlekey* est chiffré avec la clé
-commune retail (le réglage par défaut de makerom, « test », échoue avec un code 253).
+Add the `.cia` files, click **Convertir en 3DS**. The app first reads the CIA header, ticket and
+TMD, then calls `makerom` with **production keys** (`-target p`): this is required for retail
+CIAs, whose titlekey is encrypted with the retail common key (makerom's default — “test” — fails
+with exit code 253).
 
-La ROM obtenue garde le chiffrement NCCH d'origine : pour un émulateur, enchaîner avec
-**Déchiffrer** (qui accepte directement une `.cia` et fait la conversion intermédiaire).
+The resulting ROM keeps its original NCCH encryption: for an emulator, chain with **Déchiffrer**
+(which accepts a `.cia` directly and performs the intermediate conversion).
 
-### Déchiffrer
+### Decrypt
 
-Nécessite un fichier de clés, dans cet ordre de préférence :
+Requires a key file, in this order of preference:
 
-1. `boot9.bin` (dump de la console, 32 ou 64 Ko) — placé dans `~/3ds-keys/boot9.bin`
-   ou choisi via le champ **Clés** ;
-2. un fichier texte contenant au minimum `slot0x2CKeyX=…` (et `slot0x25KeyX=…` pour les jeux
-   post-7.0).
+1. `boot9.bin` (console dump, 32 or 64 KB) — placed at `~/3ds-keys/boot9.bin` or selected with the
+   **Clés** field;
+2. a text file containing at least `slot0x2CKeyX=…` (plus `slot0x25KeyX=…` for post-7.0 games).
 
-**Obtenir `boot9.bin`** (le chemin exact, souvent mal indiqué) :
+**Obtaining `boot9.bin`** (the exact path, often misreported):
 
-1. GodMode9 sur la console → lecteur **`[1:] MEMORY VIRTUAL`**
-   (et **non** `SYSNAND VIRTUAL`, où ce fichier n'existe pas) ;
-2. `boot9.bin` → **A** → *Copy to 0:/gm9/out* ;
-3. monter la carte SD sur le Mac et cliquer **Importer les clés depuis la carte SD…** :
-   l'application cherche `gm9/out/boot9.bin`, le valide (taille 32/64 Ko) et le copie dans
-   `~/3ds-keys/`.
+1. GodMode9 on the console → **`[1:] MEMORY VIRTUAL`** drive
+   (**not** `SYSNAND VIRTUAL`, where this file does not exist);
+2. `boot9.bin` → **A** → *Copy to 0:/gm9/out*;
+3. mount the SD card on the Mac and click **Importer les clés depuis la carte SD…**: the app looks
+   for `gm9/out/boot9.bin`, validates it (32/64 KB) and copies it to `~/3ds-keys/`.
 
-Si `boot9.bin` n'apparaît pas dans `MEMORY VIRTUAL` : GodMode9 est trop ancien, ou il n'a pas
-l'accès bootrom (mettre à jour `GodMode9.firm`, lancé sous Luma3DS/boot9strap).
+If `boot9.bin` does not appear in `MEMORY VIRTUAL`: GodMode9 is too old, or it lacks bootrom
+access (update `GodMode9.firm`, launched under Luma3DS/boot9strap).
 
-Le déchiffrement est **vérifié** : l'exheader déchiffré doit retomber sur son SHA-256 d'origine.
-Si les clés sont fausses, l'application s'arrête au lieu de produire une ROM silencieusement
-invalide. Sortie : `<nom>-decrypted.3ds`.
+Decryption is **verified**: the decrypted exheader must hash back to its original SHA-256. With
+wrong keys the app stops instead of producing a silently invalid ROM. Output:
+`<name>-decrypted.3ds`.
 
 ### Xorpads
 
-Ajouter les ROM concernées, cliquer **Générer ncchinfo.bin**. Ensuite, sur la console :
+Add the relevant ROMs, click **Générer ncchinfo.bin**. Then, on the console:
 
-1. copier `ncchinfo.bin` à la racine de la carte SD ;
-2. GodMode9 → `XORpad options` → `Generate ncchinfo xorpads` (ou Decrypt9 → `ncchinfo padgen`) ;
-3. copier les `.xorpad` produits dans le dossier **xorpads** de l'application.
+1. copy `ncchinfo.bin` to the SD card root;
+2. GodMode9 → `XORpad options` → `Generate ncchinfo xorpads` (or Decrypt9 → `ncchinfo padgen`);
+3. copy the produced `.xorpad` files into the app's **xorpads** folder.
 
-## 3. Réglages
+## 3. Settings
 
-Les chemins (sortie, xorpads, clés) sont mémorisés dans
+Paths (output, xorpads, keys) are remembered in
 `~/Library/Application Support/Multitool 3DS/prefs.json`.
 
-`makerom` (v0.19.0, Project_CTR) est **fourni dans l'application**, dans
-`Contents/Resources/tools/<arch>/`. Si vous en avez une autre copie, l'application utilise
-`MULTITOOL_MAKEROM`, puis `~/3ds-tools/makerom`, puis `PATH`.
+`makerom` (v0.19.0, Project_CTR) is **bundled** in the app, under
+`Contents/Resources/tools/<arch>/`. If you have another copy, the app uses `MULTITOOL_MAKEROM`,
+then `~/3ds-tools/makerom`, then `PATH`.
 
-## 4. Ligne de commande (optionnelle)
+## 4. Command line (optional)
 
 ```bash
 "/Applications/Multitool 3DS.app/Contents/Resources/runtime/arm64/bin/python3" \
   "/Applications/Multitool 3DS.app/Contents/Resources/app/launch.py"
 ```
 
-Les sous-commandes existent aussi depuis les sources (`to-cia`, `to-3ds`, `decrypt`,
-`ncchinfo`, `--keys`, `-o`, `--xorpads`).
+Subcommands also exist from source (`to-cia`, `to-3ds`, `decrypt`, `ncchinfo`, `--keys`, `-o`,
+`--xorpads`).
 
-## 5. Limites connues
+## 5. Known limitations
 
-| Cas | État |
+| Case | State |
 |---|---|
-| ROM `.3ds` commerciale chiffrée sans xorpad | refuse la conversion (message explicite) |
-| CIA eShop chiffrée (contenu AES-CBC, *titlekey*) | géré : `-target p` puis déchiffrement NCCH ; **Déchiffrer** accepte une `.cia` directement |
-| Jeux 9.6+ en crypto *seed* (`flags[7] & 0x20`) | refusé avec message explicite : pas de *seeddb* embarquée |
-| ROM > 2 Go | pris en charge (pas de limite 32 bits) |
-| Signature des CIA produites | factice : installation sur console avec Luma3DS (patches de signature) |
+| Encrypted retail `.3ds` without a xorpad | conversion refused (explicit message) |
+| Encrypted eShop CIA (AES-CBC content, *titlekey*) | handled: `-target p` then NCCH decryption; **Déchiffrer** accepts a `.cia` directly |
+| 9.6+ games with *seed* crypto (`flags[7] & 0x20`) | refused with an explicit message: no *seeddb* bundled |
+| ROMs larger than 2 GB | supported (no 32-bit limit) |
+| Signatures of produced CIAs | fake: install on a console running Luma3DS (signature patches) |
+| Real-machine validation | 3DS → CIA conversion validated on macOS (2026-11-08); CIA → 3DS and decryption are validated offline only |
 
-## 6. Développement
+## 6. Development
 
 ```text
-src/multitool3ds/    headers.py  parsing NCSD/NCCH
-                     ncchinfo.py génération ncchinfo.bin
-                     crypto.py   keygen, AES-CTR (openssl + repli pur Python), clés
-                     rom.py      extraction, xorpads, déchiffrement validé
+src/multitool3ds/    headers.py   NCSD/NCCH parsing
+                     ncchinfo.py  ncchinfo.bin generation
+                     crypto.py    keygen, AES-CTR (openssl + pure-Python fallback), keys
+                     rom.py       extraction, xorpads, verified decryption
+                     cia.py       CIA diagnosis (header/ticket/TMD)
                      converter.py pipelines
                      toolchain.py makerom
-                     gui.py      interface Tkinter
-tests/test_core.py   32 vérifications hors ligne (aucune ROM requise)
-packaging/build_app.py  assemblage du .app universel
+                     gui.py       Tkinter interface
+tests/test_core.py   48 offline checks (no ROM required)
+packaging/build_app.py  universal .app assembly
 ```
 
 ```bash
-python3 tests/test_core.py          # 32/32 attendus
-python3 packaging/build_app.py      # construit dist/Multitool 3DS.app
+python3 tests/test_core.py          # expect 48/48
+python3 packaging/build_app.py      # builds dist/Multitool 3DS.app
 ```
 
-## 7. Crédits et licence
+Each source file carries an SPDX `GPL-2.0-only` header.
 
-- Code d'origine : **TheRinzler65**, `Convertisseur-3DS-CIA` (GPL-2.0), d'après `drizzt`,
-  `mid-kid`, `3DSGuy` (`make_cia`), `ArchShift`/`d0k3` (`ncchinfo_gen`).
-- `makerom` : **3DSGuy**, *Project_CTR* — binaires officiels macOS v0.19.0.
-- Runtime Python : **python-build-standalone** (astral-sh), Python 3.12.
-- Vérification crypto : formules recoupées avec **pyctr** (MIT).
+## 7. Credits and licence
 
-Ce portage est distribué sous **GPL-2.0**, comme l'œuvre d'origine (voir `LICENSE`).
-L'outil n'est pas affilié à Nintendo ; il ne contourne aucune protection et ne fournit ni clé
-ni ROM.
+- Original code: **TheRinzler65**, `Convertisseur-3DS-CIA` (GPL-2.0), after `drizzt`, `mid-kid`,
+  `3DSGuy` (`make_cia`) and `ArchShift`/`d0k3` (`ncchinfo_gen`).
+- `makerom`: **3DSGuy**, *Project_CTR* — official macOS v0.19.0 binaries.
+- Python runtime: **python-build-standalone** (astral-sh), Python 3.12.
+- Crypto cross-check: formulas compared against **pyctr** (MIT).
+
+This port is distributed under **GPL-2.0**, like the original work (see `LICENSE`).
+The tool is not affiliated with Nintendo; it circumvents no protection and ships neither keys nor
+ROMs.

@@ -132,6 +132,16 @@ La cause exacte du SIGSEGV n'a pas pu être reproduite ici (fixtures synthétiqu
 le point de plantage) : l'hypothèse « index troués » est cohérente avec `ProcessContentFiles`
 (`contentPath[i]` indexé par l'index fourni) mais reste **déduite**.
 
+## 4 quater. Validation sur machine réelle (2026-11-08)
+
+Conversion **.3ds → .cia** exécutée avec succès par Jérôme sur macOS (Animal Crossing — New Leaf,
+ROM déjà déchiffrée, partitions 0/1/7). Le correctif v1.3 (index de contenus séquentiels, repli
+`-ccitocia`) a permis la conversion ; le chemin exact retenu par makerom n'a pas été instrumenté,
+donc la cause du SIGSEGV reste **attribuée** à l'hypothèse des index troués, non prouvée.
+
+Reste non exercé sur machine réelle : **.cia → .3ds** et **déchiffrement** (validés hors ligne
+seulement), ainsi que les ROM chiffrées sans xorpad.
+
 ## 5. Ce qui reste inconnu / non vérifié
 
 - **Aucune conversion réelle** n'a été exécutée ici : pas de ROM commerciale, pas de macOS.

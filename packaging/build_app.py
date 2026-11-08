@@ -1,4 +1,19 @@
 #!/usr/bin/env python3
+# Multitool 3DS macOS — portage macOS de « Convertisseur-3DS-CIA »
+# Copyright (C) 2026 Jérôme Pepermans
+# Copyright (C) 2024 TheRinzler65 — œuvre d'origine
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License v2
+# for more details: <https://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
 """Assemble « Multitool 3DS.app » (universel Apple Silicon + Intel) depuis Linux.
 
 Composants :
@@ -27,7 +42,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 APP_NAME = "Multitool 3DS"
 BUNDLE_ID = "com.rinzler.multitool3ds"
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 
 PBS_TAG = "20261026"
 PBS_VERSION = "3.12.16"
@@ -199,7 +214,7 @@ if __name__ == "__main__":
 
 def copy_docs(app: Path) -> None:
     res = app / "Contents" / "Resources"
-    for name in ("README.md", "LICENCE-AMONT.txt", "THIRD-PARTY.md"):
+    for name in ("README.md", "README.fr.md", "LICENCE-AMONT.txt", "THIRD-PARTY.md", "REA_ANALYSE.md"):
         src = ROOT / name
         if src.is_file():
             shutil.copy2(src, res / name)
